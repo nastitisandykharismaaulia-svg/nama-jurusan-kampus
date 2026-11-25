@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temukan Jurusan Impianmu | Tes Minat & Bakat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F4F7F4;
+            --card-bg: #FFFFFF;
+            --primary: #5C8374;
+            --primary-hover: #46665A;
+            --secondary-bg: #EBF1ED;
+            --text-main: #23312B;
+            --text-muted: #5E6E66;
+            --border-color: #DCE5DF;
+            --accent-soft: #EEF4F0;
+            --shadow: 0 12px 32px rgba(35, 49, 43, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 760px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: var(--secondary-bg);
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 50px;
+            margin-bottom: 16px;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Lora', serif;
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 2rem;
+            line-height: 1.25;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 24px;
+        }
+
+        .info-box {
+            background-color: var(--accent-soft);
+            border-left: 4px solid var(--primary);
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        /* Progress Bar */
+        .quiz-header {
+            margin-bottom: 32px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 1%;
+            background-color: var(--primary);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        /* Pertanyaan & Opsi */
+        #question-text {
+            font-size: 1.35rem;
+            margin-bottom: 24px;
+            min-height: 68px;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .option-btn {
+            text-align: left;
+            background-color: var(--card-bg);
+            border: 1.5px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background-color: var(--accent-soft);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary);
+            background-color: var(--secondary-bg);
+            font-weight: 600;
+        }
+
+        /* Tombol Navigasi */
+        .quiz-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .btn {
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 14px 28px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .primary-btn {
+            background-color: var(--primary);
+            color: #FFFFFF;
+        }
+
+        .primary-btn:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .secondary-btn {
+            background-color: var(--secondary-bg);
+            color: var(--text-main);
+        }
+
+        .secondary-btn:hover:not(:disabled) {
+            background-color: #DCE6DF;
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        /* Halaman Hasil */
+        .major-highlight {
+            background-color: var(--accent-soft);
+            padding: 24px;
+            border-radius: 16px;
+            margin: 20px 0 28px;
+            border: 1px solid var(--border-color);
+        }
+
+        .major-highlight h1 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .score-breakdown {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .score-pill {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .result-section {
+            margin-bottom: 28px;
+        }
+
+        .result-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 14px;
+        }
+
+        .campuses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .campus-card {
+            background-color: var(--bg-color);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .campus-card h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: var(--text-main);
+        }
+
+        .campus-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .admission-box ul {
+            padding-left: 20px;
+            color: var(--text-main);
+        }
+
+        .admission-box li {
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 24px 20px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .quiz-footer {
+                flex-direction: column-reverse;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <!-- Halaman Pembuka -->
+        <section id="welcome-screen" class="card active">
+            <span class="badge">100 Pertanyaan • 500 Poin Maksimal</span>
+            <h1>Temukan Jurusan Kuliah yang Paling Sesuai Denganmu</h1>
+            <p class="subtitle">Jawab 100 pertanyaan singkat seputar minat, kebiasaan, dan cara berpikirmu. Setiap jawaban bernilai 5 poin untuk memetakan potensi terbaikmu beserta rekomendasi kampus dan informasi pendaftarannya.</p>
+            <div class="info-box">
+                <p><strong>Petunjuk:</strong> Pilih jawaban yang paling menggambarkan dirimu secara jujur, bukan berdasarkan ekspektasi orang lain.</p>
+            </div>
+            <button id="start-btn" class="btn primary-btn">Mulai Tes Sekarang</button>
+        </section>
+
+        <!-- Halaman Kuis -->
+        <section id="quiz-screen" class="card hidden">
+            <div class="quiz-header">
+                <div class="progress-info">
+                    <span id="question-counter">Soal 1 dari 100</span>
+                    <span id="score-counter">Poin Terkumpul: 0 / 500</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="progress-fill" class="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <h2 id="question-text">Memuat pertanyaan...</h2>
+                <div id="options-container" class="options-grid"></div>
+            </div>
+
+            <div class="quiz-footer">
+                <button id="prev-btn" class="btn secondary-btn" disabled>← Sebelumnya</button>
+                <button id="next-btn" class="btn primary-btn" disabled>Selanjutnya →</button>
+            </div>
+        </section>
+
+        <!-- Halaman Hasil -->
+        <section id="result-screen" class="card hidden">
+            <span class="badge">Hasil Analisis Minat & Bakat</span>
+            <p class="result-intro">Berdasarkan 100 jawabanmu (Total <span id="final-score">500</span> Poin), jurusan yang paling cocok untukmu adalah:</p>
+            
+            <div class="major-highlight">
+                <h1 id="major-title">Nama Jurusan</h1>
+                <p id="major-desc">Deskripsi jurusan akan muncul di sini.</p>
+                <div id="score-breakdown" class="score-breakdown"></div>
+            </div>
+
+            <div class="result-section">
+                <h3>3 Rekomendasi Kampus Terbaik</h3>
+                <div id="campuses-list" class="campuses-grid"></div>
+            </div>
+
+            <div class="result-section admission-box">
+                <h3>Informasi & Syarat Pendaftaran</h3>
+                <ul id="admission-info"></ul>
+            </div>
+
+            <div class="result-footer">
+                <button id="restart-btn" class="btn secondary-btn">Ulangi Tes dari Awal</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const quizData = {
+            majors: {
+                IT: {
+                    shortName: "IT & Komputer",
+                    title: "Teknik Informatika & Ilmu Komputer",
+                    description: "Cocok untukmu yang menyukai pemecahan masalah logis, teknologi perangkat lunak, kecerdasan buatan, dan pengembangan sistem digital.",
+                    campuses: [
+                        { name: "Institut Teknologi Bandung (ITB)", location: "Bandung", accreditation: "Akreditasi Unggul / Internasional" },
+                        { name: "Universitas Indonesia (UI)", location: "Depok", accreditation: "Akreditasi Unggul" },
+                        { name: "Institut Teknologi Sepuluh Nopember (ITS)", location: "Surabaya", accreditation: "Akreditasi Unggul" }
+                    ],
+                    admission: [
+                        "Jalur Masuk: SNBP (Rapor & Prestasi), SNBT (UTBK Penalaran Matematika & Kuantitatif), serta Seleksi Mandiri (SIMAK UI / SM-ITB).",
+                        "Syarat Dokumen: Rapor semester 1–5, sertifikat olimpiade/lomba (nilai tambah), ijazah/SKL SMA/SMK.",
+                        "Estimasi Biaya UKT: Rp 500.000 (Golongan 1) hingga Rp 20.000.000 per semester."
+                    ]
+                },
+                MED: {
+                    shortName: "Kedokteran & Kesehatan",
+                    title: "Kedokteran & Ilmu Kesehatan",
+                    description: "Cocok untukmu yang memiliki empati tinggi, ketelitian dalam biologi/kimia, dan dedikasi untuk membantu kesehatan manusia.",
+                    campuses: [
+                        { name: "Universitas Indonesia (UI)", location: "Depok & Salemba", accreditation: "Akreditasi Unggul" },
+                        { name: "Universitas Gadjah Mada (UGM)", location: "Yogyakarta", accreditation: "Akreditasi Unggul" },
+                        { name: "Universitas Airlangga (Unair)", location: "Surabaya", accreditation: "Akreditasi Unggul" }
+                    ],
+                    admission: [
+                        "Jalur Masuk: SNBP, SNBT, dan Jalur Mandiri PTN.",
+                        "Syarat Khusus: Tidak buta warna (parsial maupun total), surat keterangan sehat jasmani & rohani, serta tes MMPI (kesehatan jiwa).",
+                        "Estimasi Biaya UKT: Rp 500.000 hingga Rp 25.000.000+ per semester (belum termasuk IPI untuk jalur mandiri)."
+                    ]
+                },
+                BIZ: {
+                    shortName: "Ekonomi & Bisnis",
+                    title: "Manajemen, Ekonomi & Bisnis",
+                    description: "Cocok untukmu yang berjiwa kepemimpinan, peka terhadap peluang pasar, suka mengelola keuangan, dan strategis.",
+                    campuses: [
+                        { name: "Universitas Gadjah Mada (UGM)", location: "Yogyakarta", accreditation: "Akreditasi Unggul & AACSB" },
+                        { name: "Universitas Indonesia (UI)", location: "Depok", accreditation: "Akreditasi Unggul" },
+                        { name: "Universitas Padjadjaran (Unpad)", location: "Jatinangor", accreditation: "Akreditasi Unggul" }
+                    ],
+                    admission: [
+                        "Jalur Masuk: SNBP, SNBT, Ujian Mandiri (UM UGM / SMUP Unpad), serta Kelas Internasional (IUP).",
+                        "Syarat Dokumen: Nilai rapor ekonomi/matematika yang stabil, skor TOEFL/IELTS (khusus jalur IUP).",
+                        "Estimasi Biaya UKT: Rp 500.000 hingga Rp 17.500.000 per semester."
+                    ]
+                },
+                LAW: {
+                    shortName: "Hukum & Sosial",
+                    title: "Ilmu Hukum & Hubungan Internasional",
+                    description: "Cocok untukmu yang kritis, gemar berdiskusi, peduli pada keadilan sosial, diplomasi, serta kebijakan publik.",
+                    campuses: [
+                        { name: "Universitas Indonesia (UI)", location: "Depok", accreditation: "Akreditasi Unggul" },
+                        { name: "Universitas Gadjah Mada (UGM)", location: "Yogyakarta", accreditation: "Akreditasi Unggul" },
+                        { name: "Universitas Diponegoro (Undip)", location: "Semarang", accreditation: "Akreditasi Unggul" }
+                    ],
+                    admission: [
+                        "Jalur Masuk: SNBP, SNBT (fokus Literasi Bahasa Indonesia & Inggris serta Penalaran Umum), dan Ujian Mandiri.",
+                        "Syarat Dokumen: Rapor SMA/MA/SMK semua jurusan (terbuka bagi lintas minat), portofolio organisasi/debat.",
+                        "Estimasi Biaya UKT: Rp 500.000 hingga Rp 15.000.000 per semester."
+                    ]
+                },
+                ART: {
+                    shortName: "Desain & Arsitektur",
+                    title: "Desain Komunikasi Visual (DKV) & Arsitektur",
+                    description: "Cocok untukmu yang memiliki kepekaan visual tinggi, imajinasi kreatif, dan senang merancang karya fungsional maupun estetis.",
+                    campuses: [
+                        { name: "Institut Teknologi Bandung (ITB - FSRD)", location: "Bandung", accreditation: "Akreditasi Unggul" },
+                        { name: "Institut Seni Indonesia (ISI)", location: "Yogyakarta", accreditation: "Akreditasi Unggul" },
+                        { name: "Institut Teknologi Sepuluh Nopember (ITS)", location: "Surabaya", accreditation: "Akreditasi Unggul" }
+                    ],
+                    admission: [
+                        "Jalur Masuk: SNBP, SNBT, dan Seleksi Mandiri.",
+                        "Syarat Wajib: Portofolio karya gambar/desain sesuai ketentuan format SNPMB serta tes keterampilan menggambar.",
+                        "Estimasi Biaya UKT: Rp 500.000 hingga Rp 18.000.000 per semester."
+                    ]
+                },
+                ENG: {
+                    shortName: "Teknik & Rekayasa",
+                    title: "Teknik Sipil, Mesin & Industri",
+                    description: "Cocok untukmu yang suka merancang infrastruktur, memahami cara kerja mesin, dan mengoptimalkan sistem produksi fisik.",
+                    campuses: [
+                        { name: "Institut Teknologi Bandung (ITB)", location: "Bandung", accreditation: "Akreditasi Unggul / ABET" },
+                        { name: "Institut Teknologi Sepuluh Nopember (ITS)", location: "Surabaya", accreditation: "Akreditasi Unggul" },
+                        { name: "Universitas Brawijaya (UB)", location: "Malang", accreditation: "Akreditasi Unggul" }
+                    ],
+                    admission: [
+                        "Jalur Masuk: SNBP, SNBT, dan Seleksi Mandiri PTN.",
+                        "Syarat Dokumen: Rapor Fisika & Matematika yang kuat, serta surat keterangan tidak buta warna untuk beberapa prodi teknik.",
+                        "Estimasi Biaya UKT: Rp 500.000 hingga Rp 20.000.000 per semester."
+                    ]
+                }
+            },
+            questions: [
+                { question: "Ketika melihat aplikasi atau website yang lambat, apa yang terlintas di pikiranmu?", options: [{ text: "Penasaran bagaimana kode di baliknya bekerja dan cara memperbaikinya", category: "IT" }, { text: "Melihat tampilan visual dan tata letak warnanya yang kurang nyaman", category: "ART" }, { text: "Berpikir berapa kerugian bisnis yang dialami pemilik aplikasi tersebut", category: "BIZ" }] },
+                { question: "Kegiatan apa yang paling membuatmu lupa waktu saat akhir pekan?", options: [{ text: "Menggambar, mengedit video, atau menata estetika ruangan", category: "ART" }, { text: "Membaca artikel kesehatan, psikologi, atau merawat tanaman/hewan", category: "MED" }, { text: "Berdiskusi tentang berita terkini, debat kebijakan, atau membaca kasus hukum", category: "LAW" }] },
+                { question: "Dalam kerja kelompok, peran mana yang paling sering kamu ambil secara alami?", options: [{ text: "Mengatur strategi, membagi tugas, dan memastikan target tercapai", category: "BIZ" }, { text: "Mengerjakan bagian teknis, merakit alat, atau membuat prototipe", category: "ENG" }, { text: "Menyusun argumen presentasi dan menjadi juru bicara utama", category: "LAW" }] },
+                { question: "Topik dokumenter mana yang paling menarik perhatianmu?", options: [{ text: "Penemuan obat baru dan cara kerja organ tubuh manusia", category: "MED" }, { text: "Pembangunan jembatan raksasa, pesawat terbang, atau energi terbarukan", category: "ENG" }, { text: "Perkembangan kecerdasan buatan (AI) dan keamanan siber", category: "IT" }] },
+                { question: "Jika diberi modal Rp 10 juta, apa yang akan kamu lakukan pertama kali?", options: [{ text: "Merancang rencana bisnis kecil-kecilan dan menghitung margin keuntungannya", category: "BIZ" }, { text: "Membeli perangkat keras/komponen untuk membangun proyek teknologi", category: "IT" }, { text: "Membuat merek produk kreatif dengan kemasan desain yang unik", category: "ART" }] },
+                { question: "Bagaimana reaksimu saat melihat seseorang mengalami kecelakaan ringan di sekitar?", options: [{ text: "Segera memberikan pertolongan pertama dengan tenang dan mengecek kondisinya", category: "MED" }, { text: "Mengamankan situasi dan memastikan hak-hak korban terlindungi", category: "LAW" }, { text: "Menganalisis penyebab teknis mengapa kecelakaan tersebut bisa terjadi", category: "ENG" }] },
+                { question: "Pelajaran sekolah mana yang konsepnya paling mudah kamu pahami?", options: [{ text: "Biologi dan Kimia", category: "MED" }, { text: "Fisika dan Matematika Terapan", category: "ENG" }, { text: "Ekonomi dan Sosiologi", category: "BIZ" }] },
+                { question: "Apa yang paling kamu perhatikan saat memasuki sebuah gedung baru?", options: [{ text: "Bentuk bangunan, pencahayaan, dan harmonisasi interiornya", category: "ART" }, { text: "Kekokohan struktur konstruksi dan sistem ventilasinya", category: "ENG" }, { text: "Sistem keamanan digital dan otomatisasi akses masuknya", category: "IT" }] },
+                { question: "Ketika membeli suatu produk, faktor apa yang paling memengaruhi keputusanmu?", options: [{ text: "Nilai investasi jangka panjang dan perbandingan harga dengan kualitas", category: "BIZ" }, { text: "Desain kemasan dan identitas visual merek tersebut", category: "ART" }, { text: "Keamanan bahan bagi kesehatan dan sertifikasi resmi produknya", category: "MED" }] },
+                { question: "Jika ada aturan sekolah atau kampus yang terasa tidak adil, apa tindakanmu?", options: [{ text: "Mengumpulkan bukti dan menyusun argumen tertulis untuk disampaikan ke pihak berwenang", category: "LAW" }, { text: "Membuat kampanye poster atau infografis kreatif untuk menyuarakan aspirasi", category: "ART" }, { text: "Mencari solusi jalan tengah yang menguntungkan semua pihak", category: "BIZ" }] },
+                { question: "Tantangan seperti apa yang paling memacu semangatmu?", options: [{ text: "Menemukan bug atau error tersembunyi dalam barisan logika", category: "IT" }, { text: "Mendiagnosis penyebab suatu masalah berdasarkan gejala yang muncul", category: "MED" }, { text: "Merancang mesin atau alur kerja agar lebih hemat energi dan waktu", category: "ENG" }] },
+                { question: "Buku atau bacaan apa yang paling betah kamu baca hingga selesai?", options: [{ text: "Biografi pengusaha sukses dan strategi keuangan", category: "BIZ" }, { text: "Sejarah politik dunia, diplomasi, dan kisah persidangan", category: "LAW" }, { text: "Ensiklopedia anatomi, gizi, atau kesehatan mental", category: "MED" }] },
+                { question: "Saat menggunakan media sosial, konten apa yang paling sering kamu simpan?", options: [{ text: "Inspirasi ilustrasi, fotografi, tipografi, atau desain UI/UX", category: "ART" }, { text: "Tutorial coding, gadget terbaru, atau tips produktivitas digital", category: "IT" }, { text: "Analisis pasar saham, tips menabung, atau ide bisnis", category: "BIZ" }] },
+                { question: "Bagaimana caramu menyelesaikan masalah yang rumit?", options: [{ text: "Memecahnya menjadi langkah-langkah algoritmis yang terstruktur", category: "IT" }, { text: "Melihatnya dari sudut pandang aturan dan konsekuensi sosialnya", category: "LAW" }, { text: "Membuat sketsa visual atau mind-map agar terlihat gambaran besarnya", category: "ART" }] },
+                { question: "Lingkungan kerja ideal seperti apa yang kamu bayangkan di masa depan?", options: [{ text: "Rumah sakit, laboratorium riset klinis, atau pusat pelayanan kesehatan", category: "MED" }, { text: "Perusahaan teknologi, startup digital, atau bekerja secara remote dari mana saja", category: "IT" }, { text: "Pabrik manufaktur modern, proyek konstruksi lapangan, atau pusat riset teknik", category: "ENG" }] },
+                { question: "Jika diminta menjadi panitia acara besar, divisi mana yang kamu pilih?", options: [{ text: "Divisi Sponsorship dan Dana Usaha", category: "BIZ" }, { text: "Divisi Dekorasi, Dokumentasi, dan Desain Publikasi", category: "ART" }, { text: "Divisi Perizinan, Keamanan, dan Hubungan Eksternal", category: "LAW" }] },
+                { question: "Apa pendapatmu tentang peralatan elektronik yang rusak di rumah?", options: [{ text: "Tertarik membongkarnya untuk melihat komponen mesin di dalamnya", category: "ENG" }, { text: "Mencari tahu apakah kerusakan ada pada sistem perangkat lunaknya", category: "IT" }, { text: "Menghitung apakah lebih hemat memperbaikinya atau membeli unit baru", category: "BIZ" }] },
+                { question: "Keterampilan baru apa yang paling ingin kamu kuasai tahun ini?", options: [{ text: "Bahasa pemrograman atau analisis data", category: "IT" }, { text: "Public speaking, negosiasi, dan bahasa asing untuk diplomasi", category: "LAW" }, { text: "Pertolongan pertama medis dan pemahaman nutrisi tubuh", category: "MED" }] },
+                { question: "Ketika melihat kemacetan lalu lintas, solusi apa yang terlintas di benakmu?", options: [{ text: "Membangun jalan layang, terowongan, atau sistem transportasi rel yang efisien", category: "ENG" }, { text: "Membuat sistem lampu lalu lintas pintar berbasis sensor dan AI", category: "IT" }, { text: "Memperketat regulasi dan penegakan hukum bagi pelanggar lalu lintas", category: "LAW" }] },
+                { question: "Pencapaian hidup seperti apa yang paling membuatmu bangga?", options: [{ text: "Menyelamatkan nyawa dan meningkatkan kualitas kesehatan banyak orang", category: "MED" }, { text: "Menciptakan karya desain atau bangunan ikonik yang dikenang", category: "ART" }, { text: "Membangun perusahaan yang membuka lapangan kerja luas", category: "BIZ" }] },
+                { question: "Jika menonton film fiksi ilmiah, elemen mana yang paling membuatmu terkesan?", options: [{ text: "Teknologi komputer, robotika, dan realitas virtual", category: "IT" }, { text: "Desain kostum, sinematografi, dan tata artistik dunianya", category: "ART" }, { text: "Sistem pemerintahan dan konflik hukum antar peradaban", category: "LAW" }] },
+                { question: "Saat teman curhat tentang masalah pribadinya, apa respon pertamamu?", options: [{ text: "Mendengarkan dengan penuh empati dan memperhatikan kondisi emosional/fisiknya", category: "MED" }, { text: "Memberikan saran objektif mengenai hak, kewajiban, dan langkah logisnya", category: "LAW" }, { text: "Membantu merancang langkah-langkah praktis untuk menyelesaikan masalahnya", category: "BIZ" }] },
+                { question: "Bagaimana caramu mencatat materi pelajaran agar mudah dipelajari?", options: [{ text: "Menggunakan warna-warni stabilo, gambar sketsa, dan tata letak rapi", category: "ART" }, { text: "Membuat poin-poin terstruktur di aplikasi catatan digital", category: "IT" }, { text: "Merangkum poin-poin inti dan hubungan sebab-akibatnya", category: "LAW" }] },
+                { question: "Proyek sekolah apa yang paling membuatmu bersemangat mengerjakannya?", options: [{ text: "Praktikum laboratorium biologi atau kimia", category: "MED" }, { text: "Merakit alat peraga fisika atau membuat maket bangunan", category: "ENG" }, { text: "Bazar kewirausahaan dan simulasi berjualan", category: "BIZ" }] },
+                { question: "Apa yang paling menarik perhatianmu saat mengunjungi pameran otomotif?", options: [{ text: "Performa mesin, aerodinamika, dan efisiensi bahan bakarnya", category: "ENG" }, { text: "Desain bodi kendaraan, lekukan estetis, dan interior kabinnya", category: "ART" }, { text: "Fitur perangkat lunak autopilot dan sistem hiburan digitalnya", category: "IT" }] },
+                { question: "Ketika membaca berita ekonomi global, apa yang paling ingin kamu ketahui?", options: [{ text: "Peluang investasi dan dampaknya terhadap UMKM serta perusahaan", category: "BIZ" }, { text: "Perjanjian dagang internasional dan regulasi antarnegara", category: "LAW" }, { text: "Dampaknya terhadap anggaran kesehatan masyarakat dan fasilitas medis", category: "MED" }] },
+                { question: "Jika kamu harus membuat game sederhana, bagian mana yang paling ingin kamu kerjakan?", options: [{ text: "Menulis logika permainan dan mekanisme kodenya", category: "IT" }, { text: "Menggambar karakter, latar tempat, dan animasinya", category: "ART" }, { text: "Merancang sistem ekonomi dalam game dan strategi monetisasinya", category: "BIZ" }] },
+                { question: "Dalam sebuah diskusi, kamu paling tidak tahan jika mendengar...", options: [{ text: "Argumen yang tidak berdasar fakta, aturan, atau logika hukum", category: "LAW" }, { text: "Informasi hoaks seputar kesehatan yang membahayakan masyarakat", category: "MED" }, { text: "Rencana proyek yang tidak memperhitungkan kekuatan teknis dan keamanan", category: "ENG" }] },
+                { question: "Apa hobi yang paling cocok menggambarkan kepribadianmu?", options: [{ text: "Fotografi, melukis, atau membuat kerajinan tangan", category: "ART" }, { text: "Bermain catur, teka-teki logika, atau merakit PC", category: "IT" }, { text: "Berorganisasi, berdebat, atau mengikuti kegiatan sosial masyarakat", category: "LAW" }] },
+                { question: "Bagaimana sikapmu terhadap angka dan statistik?", options: [{ text: "Sangat suka mengolahnya untuk memprediksi tren penjualan dan keuangan", category: "BIZ" }, { text: "Menggunakannya untuk menghitung beban struktur, gaya, dan ukuran presisi", category: "ENG" }, { text: "Menggunakannya sebagai data untuk melatih algoritma atau pemrograman", category: "IT" }] },
+                { question: "Ketika melihat kemasan makanan di supermarket, apa yang pertama kali kamu cek?", options: [{ text: "Komposisi gizi, kandungan gula/garam, dan tanggal kedaluwarsa", category: "MED" }, { text: "Tipografi logo, pemilihan warna, dan ilustrasi kemasannya", category: "ART" }, { text: "Harga per gram dibandingkan dengan merek kompetitor di sebelahnya", category: "BIZ" }] },
+                { question: "Jika terjadi bencana alam di suatu daerah, kontribusi apa yang paling ingin kamu berikan?", options: [{ text: "Menjadi relawan medis untuk mengobati korban luka", category: "MED" }, { text: "Merancang hunian sementara yang kokoh dan sistem air bersih", category: "ENG" }, { text: "Membangun sistem informasi pendataan korban dan distribusi logistik", category: "IT" }] },
+                { question: "Jenis teka-teki apa yang paling kamu sukai?", options: [{ text: "Sudoku, rubik, atau teka-teki pemrograman", category: "IT" }, { text: "Teka-teki detektif yang membutuhkan analisis motif dan bukti", category: "LAW" }, { text: "Puzzle visual atau merakit miniatur bangunan 3D", category: "ART" }] },
+                { question: "Apa yang membuatmu merasa puas setelah seharian beraktivitas?", options: [{ text: "Berhasil membantu orang lain merasa lebih sehat dan nyaman", category: "MED" }, { text: "Berhasil menyelesaikan target pekerjaan dan mendapat keuntungan", category: "BIZ" }, { text: "Berhasil memperbaiki atau menciptakan benda fisik yang berfungsi baik", category: "ENG" }] },
+                { question: "Jika diminta menjadi duta sekolah, topik pidato apa yang akan kamu bawakan?", options: [{ text: "Pentingnya kesadaran hukum, hak asasi, dan kepemimpinan pemuda", category: "LAW" }, { text: "Transformasi digital dan kesiapan generasi muda menghadapi era AI", category: "IT" }, { text: "Pola hidup sehat dan pencegahan penyakit sejak usia remaja", category: "MED" }] },
+                { question: "Saat merencanakan liburan bersama teman, tugas apa yang kamu ambil?", options: [{ text: "Menghitung anggaran biaya perjalanan dan mencari promo terbaik", category: "BIZ" }, { text: "Membuat itinerary visual dan mencari spot foto yang estetis", category: "ART" }, { text: "Memastikan rute perjalanan aman dan memeriksa kondisi kendaraan", category: "ENG" }] },
+                { question: "Menurutmu, apa kunci utama keberhasilan sebuah organisasi?", options: [{ text: "Manajemen keuangan yang sehat dan strategi pemasaran yang tepat", category: "BIZ" }, { text: "Aturan main yang jelas, adil, dan ditaati semua anggota", category: "LAW" }, { text: "Sistem kerja yang terotomatisasi dengan teknologi modern", category: "IT" }] },
+                { question: "Ketika melihat sebuah jembatan tua, pertanyaan apa yang muncul di kepalamu?", options: [{ text: "Material apa yang digunakan hingga bisa bertahan puluhan tahun?", category: "ENG" }, { text: "Bagaimana nilai sejarah dan perlindungan hukum cagar budayanya?", category: "LAW" }, { text: "Bagaimana bentuk arsitekturnya jika difoto dari sudut tertentu?", category: "ART" }] },
+                { question: "Bagaimana perasaanmu saat harus berbicara di depan banyak orang?", options: [{ text: "Sangat percaya diri, terutama saat menyampaikan pendapat atau meyakinkan audiens", category: "LAW" }, { text: "Antusias jika mempresentasikan ide bisnis atau produk baru", category: "BIZ" }, { text: "Lebih nyaman jika mempresentasikan karya visual yang sudah kubuat", category: "ART" }] },
+                { question: "Jika bekerja di laboratorium, alat apa yang paling ingin kamu gunakan?", options: [{ text: "Mikroskop untuk mengamati sel, jaringan, atau mikroorganisme", category: "MED" }, { text: "Alat uji kekuatan material, mesin CNC, atau simulator sirkuit", category: "ENG" }, { text: "Superkomputer untuk simulasi data berskala besar", category: "IT" }] },
+                { question: "Apa yang biasanya kamu lakukan ketika bosan di kelas atau rapat?", options: [{ text: "Mencoret-coret buku catatan dengan gambar atau pola geometris", category: "ART" }, { text: "Mencatat ide-ide bisnis atau menghitung rencana pengeluaran bulan depan", category: "BIZ" }, { text: "Menganalisis perilaku orang-orang di sekitar dan dinamika diskusinya", category: "LAW" }] },
+                { question: "Jika kamu memiliki kanal YouTube, tema apa yang akan kamu pilih?", options: [{ text: "Review gadget, tutorial coding, dan tips teknologi", category: "IT" }, { text: "Edukasi kesehatan, gaya hidup sehat, dan pertolongan pertama", category: "MED" }, { text: "Eksperimen sains terapan, merakit barang, dan cara kerja mesin", category: "ENG" }] },
+                { question: "Ketika membeli pakaian, apa pertimbangan utamamu?", options: [{ text: "Potongan desain, perpaduan warna, dan keunikan gaya", category: "ART" }, { text: "Kenyamanan bahan bagi kulit dan sirkulasi udara", category: "MED" }, { text: "Kualitas jahitan yang awet dan harga yang sepadan", category: "BIZ" }] },
+                { question: "Bagaimana cara terbaik untuk mengubah dunia menjadi lebih baik menurutmu?", options: [{ text: "Menciptakan inovasi teknologi yang mempermudah hidup manusia", category: "IT" }, { text: "Menegakkan keadilan dan merancang kebijakan publik yang berpihak pada rakyat", category: "LAW" }, { text: "Meningkatkan akses layanan kesehatan dan menyembuhkan penyakit", category: "MED" }] },
+                { question: "Dalam sebuah tim produksi film, posisi mana yang paling kamu minati?", options: [{ text: "Art Director & Sinematografer", category: "ART" }, { text: "Produser Eksekutif yang mengelola anggaran dan distribusi", category: "BIZ" }, { text: "Penanggung jawab efek visual digital (CGI) dan teknis kamera", category: "IT" }] },
+                { question: "Apa reaksimu saat melihat antrean panjang di loket pelayanan?", options: [{ text: "Berpikir bagaimana membuat sistem aplikasi antrean online", category: "IT" }, { text: "Menganalisis alur ruang dan tata letak loket agar lebih efisien", category: "ENG" }, { text: "Memperhatikan apakah ada ketidakadilan atau penyerobotan hak antrean", category: "LAW" }] },
+                { question: "Pelajaran olahraga atau aktivitas fisik apa yang paling kamu sukai?", options: [{ text: "Yang melatih ketangkasan dan pemahaman anatomi otot tubuh", category: "MED" }, { text: "Olahraga tim yang membutuhkan strategi dan kepemimpinan", category: "BIZ" }, { text: "Kegiatan alam bebas seperti mendaki atau membangun tenda", category: "ENG" }] },
+                { question: "Jika diminta mendesain ulang ruang kelasmu, apa yang akan kamu ubah?", options: [{ text: "Warna cat dinding, pencahayaan, dan estetika furniturnya", category: "ART" }, { text: "Menambahkan perangkat pintar seperti proyektor interaktif dan Wi-Fi cepat", category: "IT" }, { text: "Memperbaiki akustik ruangan, sirkulasi udara, dan ergonomi kursi", category: "ENG" }] },
+                { question: "Topik berita mana yang paling sering kamu klik di internet?", options: [{ text: "Kasus hukum viral, kebijakan pemerintah, dan hubungan diplomatik", category: "LAW" }, { text: "Tips investasi, kisah sukses startup, dan tren ekonomi", category: "BIZ" }, { text: "Penemuan medis terbaru dan tips menjaga kebugaran", category: "MED" }] },
+                { question: "Bagaimana caramu mempelajari cara kerja suatu alat baru?", options: [{ text: "Langsung mencobanya sambil melihat struktur fisiknya", category: "ENG" }, { text: "Membaca buku panduan aturan penggunaan dari awal hingga akhir", category: "LAW" }, { text: "Mengeksplorasi menu pengaturan digital dan fiturnya", category: "IT" }] },
+                { question: "Jika menjadi pemimpin perusahaan, fokus utamamu adalah...", options: [{ text: "Ekspansi pasar, peningkatan profit, dan efisiensi operasional", category: "BIZ" }, { text: "Inovasi produk berbasis riset teknologi mutakhir", category: "IT" }, { text: "Kesejahteraan kesehatan fisik dan mental seluruh karyawan", category: "MED" }] },
+                { question: "Apa yang paling kamu sukai dari seni musik atau pertunjukan?", options: [{ text: "Tata panggung, visual pencahayaan, dan desain poster acaranya", category: "ART" }, { text: "Sistem tata suara (sound engineering) dan peralatan teknisnya", category: "ENG" }, { text: "Manajemen tiket, promosi acara, dan kerja sama sponsor", category: "BIZ" }] },
+                { question: "Ketika berbelanja online, fitur aplikasi apa yang paling kamu apresiasi?", options: [{ text: "Antarmuka yang bersih, estetik, dan mudah dinavigasi", category: "ART" }, { text: "Kecepatan pencarian, rekomendasi akurat, dan keamanan transaksi", category: "IT" }, { text: "Perlindungan konsumen dan kejelasan aturan pengembalian barang", category: "LAW" }] },
+                { question: "Jika ada anggota keluarga yang sakit ringan, apa yang biasanya kamu lakukan?", options: [{ text: "Mencari tahu gejala, dosis obat yang tepat, dan merawatnya dengan telaten", category: "MED" }, { text: "Memastikan sirkulasi udara kamar baik dan suhu ruangan nyaman", category: "ENG" }, { text: "Mengatur jadwal istirahat dan kebutuhan logistiknya agar cepat pulih", category: "BIZ" }] },
+                { question: "Permainan papan (board game) mana yang paling kamu kuasai?", options: [{ text: "Monopoli atau game simulasi perdagangan dan investasi", category: "BIZ" }, { text: "Werewolf atau game yang mengandalkan argumentasi dan membaca situasi", category: "LAW" }, { text: "Catur atau game strategi berbasis logika", category: "IT" }] },
+                { question: "Apa yang membuat sebuah bangunan terlihat mengagumkan bagimu?", options: [{ text: "Keunikan bentuk geometris dan keselarasan dengan lingkungan sekitar", category: "ART" }, { text: "Kemampuannya menahan gempa dan efisiensi penggunaan energi", category: "ENG" }, { text: "Fungsi komersialnya sebagai pusat bisnis yang ramai", category: "BIZ" }] },
+                { question: "Saat mengerjakan tugas kelompok secara online, alat apa yang paling kamu andalkan?", options: [{ text: "Platform manajemen proyek untuk membagi tenggat waktu tim", category: "BIZ" }, { text: "Aplikasi desain kolaboratif untuk membuat presentasi yang memukau", category: "ART" }, { text: "Fitur otomatisasi dan shortcut keyboard untuk bekerja lebih cepat", category: "IT" }] },
+                { question: "Jika kamu menulis sebuah buku, genre apa yang paling mungkin kamu tulis?", options: [{ text: "Panduan praktis kesehatan dan pengembangan diri berbasis sains", category: "MED" }, { text: "Buku analisis politik, hukum, atau sejarah peradaban", category: "LAW" }, { text: "Novel fiksi dengan ilustrasi visual atau buku seni", category: "ART" }] },
+                { question: "Apa pendapatmu tentang kendaraan listrik masa kini?", options: [{ text: "Sangat menarik dari sisi teknologi baterai dan efisiensi motor listriknya", category: "ENG" }, { text: "Kagum dengan integrasi perangkat lunak dan sistem pembaruannya", category: "IT" }, { text: "Tertarik melihat persaingan bisnis antar produsen otomotif", category: "BIZ" }] },
+                { question: "Dalam sebuah perdebatan, posisi mana yang sering kamu ambil?", options: [{ text: "Mediator yang mencari titik temu berdasarkan aturan yang berlaku", category: "LAW" }, { text: "Penganalisis data yang mematahkan argumen dengan fakta teknis", category: "IT" }, { text: "Pihak yang memperhatikan dampak emosional dan kesejahteraan orang lain", category: "MED" }] },
+                { question: "Jika kamu diberi tugas merancang taman kota, elemen apa yang paling kamu utamakan?", options: [{ text: "Estetika lanskap, pemilihan warna bunga, dan spot foto artistik", category: "ART" }, { text: "Sistem drainase air, jalur ramah disabilitas, dan kekuatan material bangku", category: "ENG" }, { text: "Area olahraga dan udara bersih untuk meningkatkan kesehatan warga", category: "MED" }] },
+                { question: "Apa yang biasanya kamu perhatikan saat melihat iklan di televisi atau internet?", options: [{ text: "Konsep visual, pemilihan font, dan transisi videonya", category: "ART" }, { text: "Target pasar iklan tersebut dan strategi pemasaran produknya", category: "BIZ" }, { text: "Klaim produk apakah sudah sesuai aturan dan tidak menyesatkan konsumen", category: "LAW" }] },
+                { question: "Keterampilan teknis apa yang terasa paling alami bagimu?", options: [{ text: "Mengoperasikan perangkat lunak kompleks dan memecahkan error komputer", category: "IT" }, { text: "Mengukur, memotong, dan merakit komponen fisik dengan presisi", category: "ENG" }, { text: "Menggambar sketsa atau memadukan warna secara harmonis", category: "ART" }] },
+                { question: "Bagaimana sikapmu ketika melihat teman kesulitan memahami pelajaran?", options: [{ text: "Sabar menjelaskan langkah demi langkah dengan analogi sederhana", category: "MED" }, { text: "Membantu membuatkan rangkuman terstruktur agar mudah dihafal", category: "LAW" }, { text: "Mencarikan video tutorial atau aplikasi belajar interaktif", category: "IT" }] },
+                { question: "Jika bekerja di sektor energi, bidang mana yang paling kamu minati?", options: [{ text: "Rekayasa pembangkit listrik tenaga surya, angin, atau air", category: "ENG" }, { text: "Perdagangan karbon dan manajemen investasi energi hijau", category: "BIZ" }, { text: "Regulasi lingkungan dan kebijakan hukum energi berkelanjutan", category: "LAW" }] },
+                { question: "Apa yang paling membuatmu tertarik pada dunia kuliner?", options: [{ text: "Kandungan nutrisi, keamanan pangan, dan dampaknya bagi metabolisme", category: "MED" }, { text: "Seni menata makanan (food plating) dan fotografi kuliner", category: "ART" }, { text: "Peluang bisnis waralaba (franchise) dan manajemen operasional restoran", category: "BIZ" }] },
+                { question: "Ketika menghadapi tenggat waktu (deadline) yang ketat, apa strategimu?", options: [{ text: "Membuat skala prioritas tugas dan mendelegasikan pekerjaan", category: "BIZ" }, { text: "Menggunakan alat bantu digital untuk mengotomatisasi pekerjaan berulang", category: "IT" }, { text: "Tetap tenang, menjaga kondisi fisik, dan fokus menyelesaikan satu per satu", category: "MED" }] },
+                { question: "Menurutmu, profesi mana di bawah ini yang terlihat paling keren?", options: [{ text: "Arsitek atau Creative Director di agensi ternama", category: "ART" }, { text: "Dokter Spesialis atau Peneliti Bioteknologi", category: "MED" }, { text: "Diplomat Internasional atau Pengacara Korporasi", category: "LAW" }] },
+                { question: "Jika kamu menemukan celah keamanan pada sebuah website sekolah, apa yang kamu lakukan?", options: [{ text: "Melaporkannya kepada pengelola IT beserta penjelasan teknis cara menutup celahnya", category: "IT" }, { text: "Menekankan pentingnya perlindungan data pribadi siswa sesuai aturan", category: "LAW" }, { text: "Berpikir tentang dampak reputasi institusi jika data tersebut bocor", category: "BIZ" }] },
+                { question: "Apa yang paling kamu nikmati saat berkunjung ke museum?", options: [{ text: "Mengamati lukisan, patung, dan perkembangan gaya seni dari masa ke masa", category: "ART" }, { text: "Melihat evolusi mesin, alat transportasi, dan teknologi konstruksi kuno", category: "ENG" }, { text: "Mempelajari sejarah perjanjian, hukum kuno, dan struktur masyarakat", category: "LAW" }] },
+                { question: "Dalam memilih jurusan kuliah, faktor utama apa yang kamu pertimbangkan?", options: [{ text: "Peluang karier di industri teknologi yang terus berkembang pesat", category: "IT" }, { text: "Kesempatan untuk mengabdi langsung pada kesehatan masyarakat", category: "MED" }, { text: "Kebebasan berekspresi melalui karya kreatif dan desain", category: "ART" }] },
+                { question: "Bagaimana caramu mengatur keuangan pribadi sehari-hari?", options: [{ text: "Mencatat pemasukan dan pengeluaran secara rinci serta menyisihkan untuk investasi", category: "BIZ" }, { text: "Menggunakan aplikasi keuangan otomatis yang terhubung dengan rekening", category: "IT" }, { text: "Membeli barang hanya sesuai kebutuhan fungsional dan ketahanan jangka panjang", category: "ENG" }] },
+                { question: "Jika diminta menjadi juri dalam sebuah lomba, lomba apa yang paling kamu kuasai?", options: [{ text: "Lomba debat bahasa Indonesia/Inggris atau simulasi sidang", category: "LAW" }, { text: "Lomba desain poster, fotografi, atau arsitektur mini", category: "ART" }, { text: "Lomba rencana bisnis (business plan) dan inovasi produk", category: "BIZ" }] },
+                { question: "Apa hal pertama yang kamu lakukan saat mendapatkan smartphone baru?", options: [{ text: "Mengatur tampilan wallpaper, ikon, dan tata letak layar agar estetik", category: "ART" }, { text: "Mengeksplorasi spesifikasi prosesor, pengaturan sistem, dan fitur tersembunyi", category: "IT" }, { text: "Mengatur fitur kesehatan seperti penghitung langkah dan pengingat waktu tidur", category: "MED" }] },
+                { question: "Ketika melihat sebuah pabrik besar, apa yang paling menarik perhatianmu?", options: [{ text: "Alur lini produksi, robot perakitan, dan efisiensi mesinnya", category: "ENG" }, { text: "Sistem manajemen rantai pasok (supply chain) dan distribusi produknya", category: "BIZ" }, { text: "Sistem pengolahan limbah agar tidak mencemari kesehatan warga sekitar", category: "MED" }] },
+                { question: "Bagaimana pendapatmu tentang aturan hak cipta di internet?", options: [{ text: "Sangat penting untuk melindungi karya para desainer, musisi, dan kreator", category: "ART" }, { text: "Perlu penegakan hukum yang tegas dan regulasi digital yang jelas", category: "LAW" }, { text: "Dapat dilindungi secara teknis menggunakan algoritma deteksi atau blockchain", category: "IT" }] },
+                { question: "Jika kamu harus bekerja di luar ruangan, aktivitas apa yang paling kamu sukai?", options: [{ text: "Mengawasi pembangunan proyek infrastruktur atau survei lapangan", category: "ENG" }, { text: "Melakukan penyuluhan kesehatan dan pemeriksaan medis di daerah terpencil", category: "MED" }, { text: "Melakukan pemotretan arsitektur atau mencari inspirasi visual alam", category: "ART" }] },
+                { question: "Apa yang membuatmu merasa tertantang saat belajar matematika?", options: [{ text: "Menerapkannya untuk menghitung peluang bisnis, bunga, dan statistik pasar", category: "BIZ" }, { text: "Menerapkannya dalam rumus fisika, mekanika, dan perhitungan struktur", category: "ENG" }, { text: "Menerapkannya dalam logika algoritma dan pemrograman komputer", category: "IT" }] },
+                { question: "Jika terjadi perselisihan antar teman, peran apa yang biasanya kamu ambil?", options: [{ text: "Menjadi penengah yang adil dan mendengarkan kronologi dari kedua belah pihak", category: "LAW" }, { text: "Menenangkan emosi keduanya agar tidak berdampak buruk pada kesehatan mental", category: "MED" }, { text: "Mengajak keduanya fokus kembali pada tujuan bersama yang lebih produktif", category: "BIZ" }] },
+                { question: "Apa yang paling kamu sukai dari perkembangan kota modern?", options: [{ text: "Gedung-gedung pencakar langit dengan arsitektur futuristik", category: "ART" }, { text: "Integrasi Smart City, transportasi otomatis, dan layanan publik digital", category: "IT" }, { text: "Infrastruktur jalan tol, jembatan, dan sistem pengelolaan air yang canggih", category: "ENG" }] },
+                { question: "Ketika membaca kemasan obat, informasi apa yang paling kamu perhatikan?", options: [{ text: "Kandungan zat aktif, indikasi medis, dan efek sampingnya", category: "MED" }, { text: "Nomor izin edar resmi dan kepatuhan hukum produsen farmasi", category: "LAW" }, { text: "Nama perusahaan farmasi yang memproduksinya", category: "BIZ" }] },
+                { question: "Jika kamu membuat sebuah aplikasi, fitur apa yang menjadi prioritas utamamu?", options: [{ text: "Performa cepat, bebas bug, dan arsitektur database yang kuat", category: "IT" }, { text: "Desain antarmuka (UI) yang memanjakan mata dan pengalaman pengguna (UX)", category: "ART" }, { text: "Model bisnis yang menguntungkan dan mudah digunakan oleh pelanggan", category: "BIZ" }] },
+                { question: "Apa yang membuatmu tertarik pada dunia penerbangan atau luar angkasa?", options: [{ text: "Teknik aerodinamika roket, sistem propulsi, dan material tahan panas", category: "ENG" }, { text: "Perangkat lunak navigasi otonom dan komunikasi satelit", category: "IT" }, { text: "Dampak gravitasi nol terhadap fisiologi dan kesehatan tubuh astronot", category: "MED" }] },
+                { question: "Dalam sebuah rapat organisasi, kontribusi apa yang paling sering kamu berikan?", options: [{ text: "Mengingatkan anggaran dasar/anggaran rumah tangga serta aturan organisasi", category: "LAW" }, { text: "Mengusulkan ide sumber pendanaan dan efisiensi anggaran kegiatan", category: "BIZ" }, { text: "Merancang konsep visual acara dan media promosinya", category: "ART" }] },
+                { question: "Bagaimana caramu mengatasi rasa stres setelah belajar atau bekerja keras?", options: [{ text: "Berolahraga ringan, mengatur pola napas, dan tidur cukup", category: "MED" }, { text: "Menggambar, mendengarkan musik, atau menata ulang meja kerja", category: "ART" }, { text: "Bermain game strategi atau mengutak-atik proyek hobi teknis", category: "IT" }] },
+                { question: "Jika kamu menjadi konsultan, bidang konsultasi apa yang paling cocok untukmu?", options: [{ text: "Konsultan Manajemen Bisnis & Strategi Keuangan", category: "BIZ" }, { text: "Konsultan Hukum & Kebijakan Publik", category: "LAW" }, { text: "Konsultan Transformasi Digital & Keamanan Siber", category: "IT" }] },
+                { question: "Apa yang paling kamu perhatikan saat melihat rumah impianmu?", options: [{ text: "Konsep desain interior, pencahayaan alami, dan estetika fasadnya", category: "ART" }, { text: "Kualitas pondasi, instalasi listrik, dan sistem sirkulasi airnya", category: "ENG" }, { text: "Nilai kenaikan harga properti di lokasi tersebut di masa depan", category: "BIZ" }] },
+                { question: "Ketika mendengar istilah 'inovasi', apa yang pertama kali terbayang di benakmu?", options: [{ text: "Perangkat lunak pintar atau kecerdasan buatan yang mengubah cara kerja", category: "IT" }, { text: "Penemuan metode pengobatan baru yang menyembuhkan penyakit kronis", category: "MED" }, { text: "Mesin industri baru yang ramah lingkungan dan hemat energi", category: "ENG" }] },
+                { question: "Bagaimana sikapmu terhadap aturan dan prosedur standar (SOP)?", options: [{ text: "Sangat menghargainya karena menjamin ketertiban, keadilan, dan kepastian", category: "LAW" }, { text: "Penting untuk menjaga keselamatan kerja dan kualitas hasil produksi", category: "ENG" }, { text: "Penting dalam dunia medis untuk mencegah kesalahan penanganan pasien", category: "MED" }] },
+                { question: "Jika diminta membuat portofolio karya, isinya kemungkinan besar adalah...", options: [{ text: "Kumpulan desain grafis, ilustrasi, sketsa bangunan, atau fotografi", category: "ART" }, { text: "Kumpulan proyek website, aplikasi, atau kode pemrograman di GitHub", category: "IT" }, { text: "Laporan proyek kewirausahaan, studi kasus bisnis, atau pengalaman organisasi", category: "BIZ" }] },
+                { question: "Apa yang membuatmu kagum pada seorang pemimpin dunia?", options: [{ text: "Kemampuan diplomasinya dalam menjaga perdamaian dan menegakkan hukum", category: "LAW" }, { text: "Keberhasilannya memajukan perekonomian dan kesejahteraan rakyat", category: "BIZ" }, { text: "Visinya dalam membangun infrastruktur modern dan kemajuan teknologi", category: "ENG" }] },
+                { question: "Saat bekerja dengan komputer, hal apa yang paling sering kamu lakukan?", options: [{ text: "Menulis kode, mengolah data, atau mengeksplorasi software baru", category: "IT" }, { text: "Mengedit foto, membuat desain visual, atau merancang presentasi", category: "ART" }, { text: "Membuat tabel keuangan, analisis pasar, atau menyusun proposal", category: "BIZ" }] },
+                { question: "Mengapa menjaga kelestarian lingkungan sangat penting menurut sudut pandangmu?", options: [{ text: "Karena polusi berdampak langsung pada kesehatan pernapasan dan tubuh manusia", category: "MED" }, { text: "Karena dibutuhkan teknologi rekayasa energi bersih untuk menggantikan bahan bakar fosil", category: "ENG" }, { text: "Karena diperlukan regulasi hukum yang ketat bagi perusahaan perusak lingkungan", category: "LAW" }] },
+                { question: "Jika kamu membuka usaha sendiri, jenis usaha apa yang paling menarik?", options: [{ text: "Agensi kreatif desain grafis, arsitektur, atau studio animasi", category: "ART" }, { text: "Perusahaan pengembang aplikasi (Software House) atau startup teknologi", category: "IT" }, { text: "Klinik kesehatan, apotek, atau layanan kebugaran", category: "MED" }] },
+                { question: "Bagaimana caramu mengambil keputusan penting dalam hidup?", options: [{ text: "Menganalisis untung-rugi dan dampak jangka panjangnya secara rasional", category: "BIZ" }, { text: "Mempertimbangkan aspek etika, aturan, dan keadilan bagi semua pihak", category: "LAW" }, { text: "Menggunakan logika terstruktur dan data yang tersedia", category: "IT" }] },
+                { question: "Apa yang paling menarik bagimu dari cara kerja tubuh manusia?", options: [{ text: "Bagaimana sistem saraf, jantung, dan sel imun bekerja menjaga kehidupan", category: "MED" }, { text: "Kemiripan sistem saraf manusia dengan jaringan saraf tiruan pada AI", category: "IT" }, { text: "Prinsip biomekanika otot dan tulang saat manusia bergerak atau mengangkat beban", category: "ENG" }] },
+                { question: "Ketika melihat sebuah poster acara yang kurang menarik, apa komentarmu?", options: [{ text: "Pemilihan warna bertabrakan, hierarki teks membingungkan, dan kurang estetis", category: "ART" }, { text: "Informasi acaranya kurang persuasif untuk menarik minat pembeli tiket", category: "BIZ" }, { text: "Informasi syarat, ketentuan, dan aturan acaranya kurang jelas", category: "LAW" }] },
+                { question: "Jika kamu mengikuti kompetisi sains, cabang mana yang akan kamu pilih?", options: [{ text: "Informatika / Pemrograman Komputer", category: "IT" }, { text: "Biologi / Kimia Kesehatan", category: "MED" }, { text: "Fisika / Rekayasa Teknik", category: "ENG" }] },
+                { question: "Apa harapan terbesarmu terhadap pekerjaanmu di masa depan?", options: [{ text: "Memiliki kebebasan finansial dan mampu membangun aset bisnis sendiri", category: "BIZ" }, { text: "Menjadi ahli yang diandalkan untuk menyembuhkan dan membantu sesama", category: "MED" }, { text: "Menciptakan karya nyata (desain, bangunan, atau teknologi) yang bermanfaat luas", category: "ENG" }] },
+                { question: "Setelah menyelesaikan 100 pertanyaan ini, bidang mana yang paling mencerminkan dirimu?", options: [{ text: "Logika digital, teknologi informasi, dan pemrograman", category: "IT" }, { text: "Kesehatan manusia, empati medis, atau kreativitas visual", category: "MED" }, { text: "Strategi bisnis, hukum keadilan, atau rekayasa teknik", category: "BIZ" }] }
+            ]
+        };
+
+        let currentQuestionIndex = 0;
+        let userAnswers = new Array(quizData.questions.length).fill(null);
+        const POINTS_PER_QUESTION = 5;
+
+        // Elemen DOM
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const restartBtn = document.getElementById('restart-btn');
+
+        const questionCounter = document.getElementById('question-counter');
+        const scoreCounter = document.getElementById('score-counter');
+        const progressFill = document.getElementById('progress-fill');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+
+        // Mulai Kuis
+        startBtn.addEventListener('click', () => {
+            welcomeScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            renderQuestion();
+        });
+
+        // Menampilkan Pertanyaan
+        function renderQuestion() {
+            const totalQuestions = quizData.questions.length;
+            const currentQ = quizData.questions[currentQuestionIndex];
+            const answeredCount = userAnswers.filter(ans => ans !== null).length;
+
+            // Update header & progress bar
+            questionCounter.textContent = `Soal ${currentQuestionIndex + 1} dari ${totalQuestions}`;
+            scoreCounter.textContent = `Poin Terkumpul: ${answeredCount * POINTS_PER_QUESTION} / ${totalQuestions * POINTS_PER_QUESTION}`;
+            const progressPercent = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            progressFill.style.width = `${progressPercent}%`;
+
+            // Tampilkan teks soal
+            questionText.textContent = `${currentQuestionIndex + 1}. ${currentQ.question}`;
+
+            // Render opsi jawaban
+            optionsContainer.innerHTML = '';
+            currentQ.options.forEach((opt) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                if (userAnswers[currentQuestionIndex] === opt.category) {
+                    button.classList.add('selected');
+                }
+                button.textContent = opt.text;
+                button.addEventListener('click', () => selectOption(opt.category));
+                optionsContainer.appendChild(button);
+            });
+
+            // Update status tombol navigasi
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.disabled = userAnswers[currentQuestionIndex] === null;
+            nextBtn.textContent = currentQuestionIndex === totalQuestions - 1 ? 'Lihat Hasil Jurusan ✓' : 'Selanjutnya →';
+        }
+
+        // Memilih Opsi
+        function selectOption(category) {
+            userAnswers[currentQuestionIndex] = category;
+            renderQuestion();
+        }
+
+        // Navigasi Sebelumnya
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        });
+
+        // Navigasi Selanjutnya / Selesai
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestionIndex < quizData.questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                calculateAndShowResult();
+            }
+        });
+
+        // Menghitung Skor Akhir & Menampilkan Rekomendasi
+        function calculateAndShowResult() {
+            const categoryScores = { IT: 0, MED: 0, BIZ: 0, LAW: 0, ART: 0, ENG: 0 };
+            let totalPoints = 0;
+
+            userAnswers.forEach(category => {
+                if (category) {
+                    categoryScores[category] = (categoryScores[category] || 0) + POINTS_PER_QUESTION;
+                    totalPoints += POINTS_PER_QUESTION;
+                }
+            });
+
+            // Cari kategori dengan poin tertinggi
+            let topCategory = Object.keys(categoryScores)[0];
+            for (const cat in categoryScores) {
+                if (categoryScores[cat] > categoryScores[topCategory]) {
+                    topCategory = cat;
+                }
+            }
+
+            const resultInfo = quizData.majors[topCategory];
+
+            // Isi elemen halaman hasil
+            document.getElementById('final-score').textContent = totalPoints;
+            document.getElementById('major-title').textContent = resultInfo.title;
+            document.getElementById('major-desc').textContent = resultInfo.description;
+
+            // Rincian poin tiap kategori
+            const breakdownContainer = document.getElementById('score-breakdown');
+            breakdownContainer.innerHTML = '';
+            Object.entries(categoryScores)
+                .sort((a, b) => b[1] - a[1])
+                .forEach(([cat, score]) => {
+                    const pill = document.createElement('span');
+                    pill.className = 'score-pill';
+                    pill.textContent = `${quizData.majors[cat].shortName}: ${score} poin`;
+                    breakdownContainer.appendChild(pill);
+                });
+
+            // Render 3 kampus terbaik
+            const campusesList = document.getElementById('campuses-list');
+            campusesList.innerHTML = '';
+            resultInfo.campuses.forEach(campus => {
+                const div = document.createElement('div');
+                div.className = 'campus-card';
+                div.innerHTML = `<h4>${campus.name}</h4><p>${campus.location} • ${campus.accreditation}</p>`;
+                campusesList.appendChild(div);
+            });
+
+            // Render informasi pendaftaran
+            const admissionList = document.getElementById('admission-info');
+            admissionList.innerHTML = '';
+            resultInfo.admission.forEach(info => {
+                const li = document.createElement('li');
+                li.textContent = info;
+                admissionList.appendChild(li);
+            });
+
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+        }
+
+        // Ulangi Tes
+        restartBtn.addEventListener('click', () => {
+            currentQuestionIndex = 0;
+            userAnswers = new Array(quizData.questions.length).fill(null);
+            resultScreen.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
